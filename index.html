@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Untuk Bubub Ku 💌</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    min-height:100vh;
+    background: linear-gradient(135deg,#ffdde1,#ffc3d0,#ffb6c9);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    overflow:hidden;
+    font-family:'Poppins',sans-serif;
+    position:relative;
+  }
+
+  /* Bunga jatuh */
+  .petal {
+    position:fixed;
+    top:-10%;
+    font-size:24px;
+    user-select:none;
+    pointer-events:none;
+    opacity:0;
+    z-index:5;
+    animation: fall linear forwards;
+  }
+  @keyframes fall {
+    0% { opacity:1; transform: translateY(0) rotate(0deg); }
+    100% { opacity:0.9; transform: translateY(110vh) rotate(360deg); }
+  }
+
+  /* Amplop */
+  .envelope-wrap {
+    position:relative;
+    cursor:pointer;
+    z-index:2;
+  }
+  .envelope {
+    width:280px;
+    height:190px;
+    background:#fff0f3;
+    border-radius:10px;
+    box-shadow:0 15px 35px rgba(200,50,90,0.35);
+    position:relative;
+    overflow:hidden;
+    transition: transform .4s ease;
+  }
+  .envelope:hover { transform: scale(1.04); }
+  .flap {
+    position:absolute;
+    top:0; left:0;
+    width:0; height:0;
+    border-left:140px solid transparent;
+    border-right:140px solid transparent;
+    border-top:95px solid #ff8fa3;
+    transform-origin:top;
+    transition: transform 0.8s ease;
+    z-index:3;
+  }
+  .envelope.open .flap {
+    transform: rotateX(180deg);
+  }
+  .heart-seal {
+    position:absolute;
+    top:70px; left:50%;
+    transform:translateX(-50%);
+    font-size:34px;
+    z-index:4;
+    animation: pulse 1.4s infinite ease-in-out;
+  }
+  @keyframes pulse {
+    0%,100% { transform:translateX(-50%) scale(1); }
+    50% { transform:translateX(-50%) scale(1.15); }
+  }
+  .envelope.open .heart-seal { opacity:0; }
+
+  .hint {
+    text-align:center;
+    margin-top:18px;
+    color:#c2185b;
+    font-size:14px;
+    letter-spacing:1px;
+  }
+
+  /* Surat */
+  .letter {
+    position:fixed;
+    top:50%; left:50%;
+    transform: translate(-50%,-50%) scale(0);
+    width:min(90%, 480px);
+    background:#fffaf5;
+    border-radius:16px;
+    padding:45px 30px;
+    text-align:center;
+    box-shadow:0 25px 60px rgba(0,0,0,0.35);
+    z-index:10;
+    opacity:0;
+    transition: transform .6s cubic-bezier(.34,1.56,.64,1), opacity .5s ease;
+    border:2px dashed #ffb6c9;
+  }
+  .letter.show {
+    transform: translate(-50%,-50%) scale(1);
+    opacity:1;
+  }
+  .letter h1 {
+    font-family:'Great Vibes', cursive;
+    font-size:3rem;
+    color:#d6336c;
+    margin-bottom:10px;
+    text-shadow: 1px 1px 6px rgba(214,51,108,0.25);
+  }
+  .letter p {
+    font-family:'Great Vibes', cursive;
+    font-size:1.5rem;
+    color:#a13a5f;
+    line-height:1.6;
+  }
+  .letter .icons { margin-top:18px; font-size:22px; }
+  .close-btn {
+    margin-top:25px;
+    background:#ff8fa3;
+    border:none;
+    color:white;
+    padding:10px 22px;
+    border-radius:30px;
+    font-family:'Poppins',sans-serif;
+    font-size:13px;
+    cursor:pointer;
+    box-shadow:0 6px 15px rgba(255,143,163,0.5);
+  }
+  .close-btn:hover { background:#ff6f91; }
+
+  .overlay {
+    position:fixed; inset:0;
+    background:rgba(214,51,108,0.25);
+    opacity:0;
+    pointer-events:none;
+    transition:opacity .5s ease;
+    z-index:9;
+  }
+  .overlay.show { opacity:1; pointer-events:auto; }
+
+  /* Kucing bawa bunga saat surat ditutup */
+  .cat-scene {
+    position:fixed;
+    top:50%; left:50%;
+    transform: translate(-50%,-50%) scale(0.6);
+    opacity:0;
+    z-index:11;
+    text-align:center;
+    pointer-events:none;
+    transition: transform .6s cubic-bezier(.34,1.56,.64,1), opacity .5s ease;
+  }
+  .cat-scene.show {
+    transform: translate(-50%,-50%) scale(1);
+    opacity:1;
+  }
+  .cat-scene img {
+    max-width:260px;
+    width:70vw;
+    border-radius:20px;
+    box-shadow:0 20px 45px rgba(0,0,0,0.35);
+  }
+  .cat-caption {
+    margin-top:14px;
+    font-family:'Great Vibes', cursive;
+    font-size:1.8rem;
+    color:#d6336c;
+    text-shadow: 1px 1px 6px rgba(255,255,255,0.8);
+  }
+</style>
+</head>
+<body>
+
+  <div class="overlay" id="overlay"></div>
+
+  <div>
+    <div class="envelope-wrap" id="envelopeWrap">
+      <div class="envelope" id="envelope">
+        <div class="flap"></div>
+        <div class="heart-seal">❤️</div>
+      </div>
+      <div class="hint">tap amplopnya, bub ✨</div>
+    </div>
+  </div>
+
+  <div class="letter" id="letter">
+    <h1>Halo Bubub Ku Cintaku</h1>
+    <p>Bahkan jika semesta menunjukkan seribu kekuranganmu,<br>
+    aku akan tetap memilihmu berulang kali tanpa ragu Ea.</p>
+    <div class="icons">🌸 💖 🌷 💐 🌹</div>
+    <button class="close-btn" id="closeBtn">tutup dulu ya</button>
+  </div>
+
+  <div class="cat-scene" id="catScene">
+    <img id="catImg" src="https://i.ibb.co.com/N2cVt1q2/dd90cc10bec28bc8768fe46fedc63c80.jpg" alt="kucing membawa bunga">
+    <p class="cat-caption">Buat Kamu Bub 🐾💐</p>
+  </div>
+
+<script>
+const envelope = document.getElementById('envelope');
+const letter = document.getElementById('letter');
+const overlay = document.getElementById('overlay');
+const closeBtn = document.getElementById('closeBtn');
+const envelopeWrap = document.getElementById('envelopeWrap');
+
+const flowers = ['🌸','🌷','🌹','💐','🌺','💮','🏵️','💗'];
+
+function spawnPetals(count){
+  for(let i=0;i<count;i++){
+    setTimeout(()=>{
+      const p = document.createElement('div');
+      p.className='petal';
+      p.textContent = flowers[Math.floor(Math.random()*flowers.length)];
+      p.style.left = Math.random()*100 + 'vw';
+      p.style.fontSize = (16 + Math.random()*22) + 'px';
+      const duration = 3 + Math.random()*3;
+      p.style.animationDuration = duration + 's';
+      document.body.appendChild(p);
+      setTimeout(()=>p.remove(), duration*1000 + 200);
+    }, i*80);
+  }
+}
+
+envelopeWrap.addEventListener('click', () => {
+  if(envelope.classList.contains('open')) return;
+  envelope.classList.add('open');
+  overlay.classList.add('show');
+
+  setTimeout(()=>{
+    letter.classList.add('show');
+    spawnPetals(35);
+  }, 500);
+});
+
+const catScene = document.getElementById('catScene');
+
+closeBtn.addEventListener('click', (e)=>{
+  e.stopPropagation();
+  letter.classList.remove('show');
+
+  // munculkan kucing bawa bunga sesaat setelah surat menutup
+  setTimeout(()=>{
+    catScene.classList.add('show');
+    catScene.style.pointerEvents = 'auto';
+    spawnPetals(15);
+  }, 350);
+});
+
+// klik di mana saja pada scene kucing untuk menutupnya kembali
+catScene.addEventListener('click', ()=>{
+  catScene.classList.remove('show');
+  catScene.style.pointerEvents = 'none';
+  overlay.classList.remove('show');
+  envelope.classList.remove('open');
+});
+
+// bunga sesekali jatuh santai di background sebelum dibuka
+setInterval(()=>{
+  if(!letter.classList.contains('show')) spawnPetals(1);
+}, 1200);
+</script>
+
+</body>
+</html>
